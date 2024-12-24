@@ -141,10 +141,9 @@ export const DexContainer = () => {
           message: 'Amount must be greater than zero.',
         })
       );
-      return;
     }
 
-    if (!address) return;
+    if (!address || amount <= 0) return;
 
     await writeContractAsync({
       abi,
@@ -165,7 +164,16 @@ export const DexContainer = () => {
             message: 'Destination address must be a valid address.',
           })
         );
-        return;
+      }
+
+      if (amount <= 0) {
+        console.log('amount must be greater than zero');
+        dispatch(
+          setError({
+            field: 'amount',
+            message: 'Amount must be greater than zero.',
+          })
+        );
       }
 
       if (amount > Number(formattedBalance)) {
@@ -175,8 +183,14 @@ export const DexContainer = () => {
             message: `Insufficient ${token.label} balance.`,
           })
         );
-        return;
       }
+
+      if (
+        !isAddress(spenderAddress) ||
+        amount <= 0 ||
+        amount > Number(formattedBalance)
+      )
+        return;
 
       dispatch(setIsLoading({ method: 'approve', isLoading: true }));
 
@@ -203,7 +217,15 @@ export const DexContainer = () => {
             message: 'Destination address must be a valid address.',
           })
         );
-        return;
+      }
+
+      if (amount <= 0) {
+        dispatch(
+          setError({
+            field: 'amount',
+            message: 'Amount must be greater than zero.',
+          })
+        );
       }
 
       if (amount > Number(formattedAllowance)) {
@@ -213,7 +235,6 @@ export const DexContainer = () => {
             message: `Insufficient ${token.label} allowance.`,
           })
         );
-        return;
       }
 
       if (amount > Number(formattedBalance)) {
@@ -223,10 +244,17 @@ export const DexContainer = () => {
             message: `Insufficient ${token.label} balance.`,
           })
         );
-        return;
       }
 
-      dispatch(setIsLoading({ method: 'transferFrom', isLoading: true }));
+      if (
+        !isAddress(toAddress) ||
+        amount <= 0 ||
+        amount > Number(formattedAllowance) ||
+        amount > Number(formattedBalance)
+      )
+        return;
+
+      dispatch(setIsLoading({ method: 'transfer', isLoading: true }));
 
       await writeContractAsync({
         abi,
@@ -237,7 +265,7 @@ export const DexContainer = () => {
 
       dispatch(resetState());
     } catch (error) {
-      dispatch(setIsLoading({ method: 'transferFrom', isLoading: false }));
+      dispatch(setIsLoading({ method: 'transfer', isLoading: false }));
     }
   };
 
@@ -315,7 +343,7 @@ export const DexContainer = () => {
           label="Amount"
           min={0}
           type="number"
-          value={amount || 0}
+          value={amount || ''}
           onChange={onChangeAmount}
           error={!!errors['amount']}
         />

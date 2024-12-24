@@ -5,7 +5,7 @@ import { Error, Loading, Token } from '../../../interfaces';
 interface DexState {
   destinationAddress: string;
   token: Token;
-  amount: number;
+  amount: number | undefined;
   errors: { [key: string]: string };
   isLoading: { [key: string]: boolean };
   transactionHash: Address;
@@ -18,7 +18,7 @@ const initialState: DexState = {
     decimals: 0,
     label: '',
   },
-  amount: 0,
+  amount: undefined,
   errors: {},
   isLoading: {
     approve: false,
