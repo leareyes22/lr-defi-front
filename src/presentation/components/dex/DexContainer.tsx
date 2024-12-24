@@ -145,13 +145,14 @@ export const DexContainer = () => {
 
     if (!address || amount <= 0) return;
 
-    await writeContractAsync({
+    const txHash = await writeContractAsync({
       abi,
       address: token.address as Address,
       functionName: 'mint',
       args: [address, parseUnits(amount.toString(), token.decimals)],
     });
 
+    dispatch(setTransactionHash(txHash));
     dispatch(resetState());
   };
 
@@ -256,13 +257,14 @@ export const DexContainer = () => {
 
       dispatch(setIsLoading({ method: 'transfer', isLoading: true }));
 
-      await writeContractAsync({
+      const txHash = await writeContractAsync({
         abi,
         address: token.address as Address,
         functionName: 'transfer',
         args: [toAddress, parseUnits(amount.toString(), token.decimals)],
       });
 
+      dispatch(setTransactionHash(txHash));
       dispatch(resetState());
     } catch (error) {
       dispatch(setIsLoading({ method: 'transfer', isLoading: false }));
