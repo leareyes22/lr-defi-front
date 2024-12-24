@@ -41,8 +41,7 @@ interface MintCall {
   amount: number;
 }
 
-interface TransferFromCall {
-  fromAddress: Address;
+interface TransferCall {
   toAddress: Address;
   amount: number;
 }
@@ -108,8 +107,6 @@ export const DexContainer = () => {
   };
 
   const onChangeDestinationAddress = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.value) return;
-
     dispatch(setDestinationAddress(e.target.value));
     dispatch(clearError('destinationAddress'));
   };
@@ -131,8 +128,6 @@ export const DexContainer = () => {
   };
 
   const onChangeAmount = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.value) return;
-
     dispatch(setAmount(e.target.valueAsNumber));
     dispatch(clearError('amount'));
   };
@@ -163,7 +158,15 @@ export const DexContainer = () => {
 
   const approve = async ({ spenderAddress, amount }: ApproveCall) => {
     try {
-      if (!spenderAddress) return;
+      if (!isAddress(spenderAddress)) {
+        dispatch(
+          setError({
+            field: 'destinationAddress',
+            message: 'Destination address must be a valid address.',
+          })
+        );
+        return;
+      }
 
       if (amount > Number(formattedBalance)) {
         dispatch(
@@ -191,11 +194,7 @@ export const DexContainer = () => {
     }
   };
 
-  const transferFrom = async ({
-    fromAddress,
-    toAddress,
-    amount,
-  }: TransferFromCall) => {
+  const transfer = async ({ toAddress, amount }: TransferCall) => {
     try {
       if (!isAddress(toAddress)) {
         dispatch(
@@ -232,12 +231,8 @@ export const DexContainer = () => {
       await writeContractAsync({
         abi,
         address: token.address as Address,
-        functionName: 'transferFrom',
-        args: [
-          fromAddress,
-          toAddress,
-          parseUnits(amount.toString(), token.decimals),
-        ],
+        functionName: 'transfer',
+        args: [toAddress, parseUnits(amount.toString(), token.decimals)],
       });
 
       dispatch(resetState());
@@ -298,7 +293,7 @@ export const DexContainer = () => {
             onClick={() =>
               mint({
                 address: address as Address,
-                amount,
+                amount: amount ?? 0,
               })
             }
           >
@@ -319,8 +314,8 @@ export const DexContainer = () => {
           crossOrigin=""
           label="Amount"
           min={0}
-          type="text"
-          value={amount}
+          type="number"
+          value={amount || 0}
           onChange={onChangeAmount}
           error={!!errors['amount']}
         />
@@ -336,7 +331,7 @@ export const DexContainer = () => {
           onClick={() =>
             approve({
               spenderAddress: destinationAddress as Address,
-              amount,
+              amount: amount ?? 0,
             })
           }
           loading={isLoading['approve']}
@@ -349,13 +344,12 @@ export const DexContainer = () => {
           }
           variant="gradient"
           onClick={() =>
-            transferFrom({
-              fromAddress: address as Address,
+            transfer({
               toAddress: destinationAddress as Address,
-              amount,
+              amount: amount ?? 0,
             })
           }
-          loading={isLoading['transferFrom']}
+          loading={isLoading['transfer']}
         >
           Transfer
         </Button>

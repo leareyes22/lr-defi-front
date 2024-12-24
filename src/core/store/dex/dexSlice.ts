@@ -22,7 +22,7 @@ const initialState: DexState = {
   errors: {},
   isLoading: {
     approve: false,
-    transferFrom: false,
+    transfer: false,
   },
   transactionHash: '0x',
 };
@@ -76,7 +76,6 @@ const dexSlice = createSlice({
       state.destinationAddress = initialState.destinationAddress;
       state.errors = initialState.errors;
       state.isLoading = initialState.isLoading;
-      //state.transactionHash = initialState.transactionHash;
     },
   },
 });
