@@ -87,6 +87,7 @@ export const DexContainer = () => {
       enabled: transactionHash !== '0x',
     },
   });
+  const addRecentTransaction = useAddRecentTransaction();
 
   // Formatted token balance and allowance
   const formattedBalance = balance
@@ -152,6 +153,11 @@ export const DexContainer = () => {
       args: [address, parseUnits(amount.toString(), token.decimals)],
     });
 
+    addRecentTransaction({
+      hash: txHash,
+      description: 'Mint transaction.',
+    });
+
     dispatch(setTransactionHash(txHash));
     dispatch(resetState());
   };
@@ -200,6 +206,11 @@ export const DexContainer = () => {
         address: token.address as Address,
         functionName: 'approve',
         args: [spenderAddress, parseUnits(amount.toString(), token.decimals)],
+      });
+
+      addRecentTransaction({
+        hash: txHash,
+        description: 'Approve transaction.',
       });
 
       dispatch(setTransactionHash(txHash));
@@ -262,6 +273,11 @@ export const DexContainer = () => {
         address: token.address as Address,
         functionName: 'transfer',
         args: [toAddress, parseUnits(amount.toString(), token.decimals)],
+      });
+
+      addRecentTransaction({
+        hash: txHash,
+        description: 'Transfer transaction.',
       });
 
       dispatch(setTransactionHash(txHash));

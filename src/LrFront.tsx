@@ -12,7 +12,7 @@ export const LrFront = () => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider showRecentTransactions>
           <RouterProvider router={router} />
         </RainbowKitProvider>
       </QueryClientProvider>
