@@ -30,6 +30,7 @@ import {
 import { Loader } from '../loader/Loader';
 import { ErrorMessage } from '../error/ErrorMessage';
 import { TokensSelect } from '../select/TokensSelect';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 
 interface ApproveCall {
   spenderAddress: Address;
