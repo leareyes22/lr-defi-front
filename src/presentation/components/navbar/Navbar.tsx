@@ -10,7 +10,7 @@ export const Navbar = () => {
         return <NavbarMenuItem key={v7()} {...menuItem} />;
       })}
       <div className="flex flex-1" />
-      <div className="shadow-md rounded-md">
+      <div className="flex items-center shadow-md rounded-md">
         <ConnectButton />
       </div>
     </nav>
