@@ -1,5 +1,5 @@
 import { Loader } from './Loader';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 describe('Loader test:', () => {
@@ -11,7 +11,7 @@ describe('Loader test:', () => {
   });
 
   it('Should render the loading spinner when txIsLoading is true.', () => {
-    render(<Loader txIsLoading={true} />);
-    screen.getByText('Transaction in progress...');
+    const { getByText } = render(<Loader txIsLoading={true} />);
+    getByText('Transaction in progress...');
   });
 });

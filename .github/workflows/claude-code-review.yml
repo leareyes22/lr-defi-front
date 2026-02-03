@@ -12,6 +12,9 @@ on:
 
 jobs:
   claude-review:
+    # Skip for bot accounts (Copilot, dependabot, etc.) since they can't be checked as collaborators
+    if: github.event.pull_request.user.type != 'Bot'
+
     # Optional: Filter by PR author
     # if: |
     #   github.event.pull_request.user.login == 'external-contributor' ||

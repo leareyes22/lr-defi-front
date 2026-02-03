@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import { afterEach, describe, it, expect } from 'vitest';
 import { ErrorMessage } from './ErrorMessage';
 
@@ -17,7 +17,7 @@ describe('ErrorMessage Component', () => {
 
   it('Should render the error message when a message is not empty.', () => {
     const errorMessage = 'This is an error message.';
-    render(<ErrorMessage error={errorMessage} />);
-    screen.getByText(errorMessage);
+    const { getByText } = render(<ErrorMessage error={errorMessage} />);
+    getByText(errorMessage);
   });
 });
