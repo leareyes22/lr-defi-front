@@ -2,29 +2,35 @@ import { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import dexReducer from '../../core/store/dex/dexSlice';
 
+const rootReducer = combineReducers({
+  dex: dexReducer,
+});
+
+type RootState = ReturnType<typeof rootReducer>;
+
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
-  preloadedState?: {
-    dex?: ReturnType<typeof dexReducer>;
-  };
-  store?: EnhancedStore;
+  preloadedState?: Partial<RootState>;
+  store?: ReturnType<typeof configureStore>;
   route?: string;
 }
 
 export function renderWithProviders(
   ui: ReactElement,
-  {
+  extendedRenderOptions: ExtendedRenderOptions = {}
+) {
+  const {
     preloadedState = {},
     store = configureStore({
-      reducer: { dex: dexReducer },
+      reducer: rootReducer,
       preloadedState,
     }),
     route = '/',
     ...renderOptions
-  }: ExtendedRenderOptions = {}
-) {
+  } = extendedRenderOptions;
+
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <Provider store={store}>
@@ -45,15 +51,17 @@ export function renderWithRouter(
 
 export function renderWithRedux(
   ui: ReactElement,
-  {
+  extendedRenderOptions: ExtendedRenderOptions = {}
+) {
+  const {
     preloadedState = {},
     store = configureStore({
-      reducer: { dex: dexReducer },
+      reducer: rootReducer,
       preloadedState,
     }),
     ...renderOptions
-  }: ExtendedRenderOptions = {}
-) {
+  } = extendedRenderOptions;
+
   function Wrapper({ children }: { children: React.ReactNode }) {
     return <Provider store={store}>{children}</Provider>;
   }
